@@ -1,6 +1,6 @@
 // React-context
 // https://www.youtube.com/watch?v=IB140yvLfh8
-// 40:20... -- 1:00:44
+// 40:20... -- 1:04:56
 //<>
 import React, {createContext, useContext, useState} from 'react';
 import {Switch, BrowserRouter as Router, Route, Link} from 'react-router-dom';
@@ -11,12 +11,12 @@ const TodoContextProvider = ({children}) => {
     const [todos, setTodos] = useState([])
 
     const onTodosCreate = (newTodo) => {
-        if(!newTodo || !newTodo.title || !newTodo.description) {
+        if (!newTodo || !newTodo.title || !newTodo.description) {
             console.error('wrong arg for new todo, should be smth like {title: "...", description: "..."}')
             return
         }
 
-        setTodos([newTodo,...todos])
+        setTodos([newTodo, ...todos])
     }
 
     return (
@@ -30,6 +30,12 @@ const TodoContextProvider = ({children}) => {
 }
 
 const TodosList = () => {
+    const {
+        todos
+    } = useContext(TodoContext);
+
+    console.log(todos, 'from list');
+
     return (
         <h1>todos list</h1>
     )
@@ -42,10 +48,17 @@ const AddTodo = () => {
         description: '',
     })
 
+    // const {todos, onTodosCreate} = useContext(TodoContext);
+    // console.log(todos);
+    const {
+        onTodosCreate
+    } = useContext(TodoContext);
+
     const onTodoChange = ({target: {name, value}}) => setTodoValues({...todoValues, [name]: value});
 
     const onCreate = () => {
         // onTodoAdd (from context)
+        onTodosCreate(todoValues);
         setTodoValues({
             title: '',
             description: '',
@@ -78,25 +91,28 @@ const Header = () => {
 
 export default function App() {
     return (
-        <main>
-            {/*// 1 список тудушок, де ми можемо маркувати їх як виконані або видаляти*/}
-            {/*// 2 формочка для створення нової тудушки*/}
-            <Router>
-                <Header/>
+        <TodoContextProvider>
+            <main>
+                {/*// 1 список тудушок, де ми можемо маркувати їх як виконані або видаляти*/}
+                {/*// 2 формочка для створення нової тудушки*/}
+                <Router>
+                    <Header/>
 
-                <div style={{padding: 20}}>
-                    <Switch>
-                        <Route path="/" exact>
-                            <TodosList/>
-                        </Route>
+                    <div style={{padding: 20}}>
+                        <Switch>
+                            <Route path="/" exact>
+                                <TodosList/>
+                            </Route>
 
-                        <Route path="/create-todo">
-                            <AddTodo/>
-                        </Route>
-                    </Switch>
-                </div>
-            </Router>
-        </main>
+                            <Route path="/create-todo">
+                                <AddTodo/>
+                            </Route>
+                        </Switch>
+                    </div>
+                </Router>
+            </main>
+
+        </TodoContextProvider>
     );
 }
 
