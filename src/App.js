@@ -1,50 +1,186 @@
-import './App.css';
-import React, {useState, createContext} from "react";
+// React-context
+// https://www.youtube.com/watch?v=IB140yvLfh8
+// 40:20... -- 1:00:44
+//<>
+import React, {createContext, useContext, useState} from 'react';
+import {Switch, BrowserRouter as Router, Route, Link} from 'react-router-dom';
 
-const CounterContext = createContext();
-console.log(CounterContext);
+const TodoContext = createContext();
 
-const ContextProvider = ({children}) => {
-  const [counter, setCounter] = useState(0);
+const TodoContextProvider = ({children}) => {
+    const [todos, setTodos] = useState([])
 
-  const incCounter = () => {
-    setCounter(counter + 1);
-  }
-  const decCounter = () => {
-    setCounter(counter - 1);
-  }
+    const onTodosCreate = (newTodo) => {
+        if(!newTodo || !newTodo.title || !newTodo.description) {
+            console.error('wrong arg for new todo, should be smth like {title: "...", description: "..."}')
+            return
+        }
 
-  return (
-    <CounterContext.Provider>
-      {children}
-    </CounterContext.Provider>
-  )
+        setTodos([newTodo,...todos])
+    }
+
+    return (
+        <TodoContext.Provider value={{
+            todos,
+            onTodosCreate
+        }}>
+            {children}
+        </TodoContext.Provider>
+    )
 }
 
-const Counter = () => {
-
-  return (
-    <h3 onClick={() => setCounter(counter + 1)}>Counter: {counter}</h3>
-  )
+const TodosList = () => {
+    return (
+        <h1>todos list</h1>
+    )
 }
 
+
+const AddTodo = () => {
+    const [todoValues, setTodoValues] = useState({
+        title: '',
+        description: '',
+    })
+
+    const onTodoChange = ({target: {name, value}}) => setTodoValues({...todoValues, [name]: value});
+
+    const onCreate = () => {
+        // onTodoAdd (from context)
+        setTodoValues({
+            title: '',
+            description: '',
+        })
+    }
+
+    return (
+        <div>
+            <br/>
+            <input value={todoValues.title} onChange={onTodoChange} type="text" name="title" placeholder="todo title"/>
+            <br/>
+            <br/>
+            <input value={todoValues.description} onChange={onTodoChange} type="text" name="description"
+                   placeholder="todo description"/>
+            <br/>
+            <br/>
+
+            <button onClick={onCreate}>add todo</button>
+        </div>
+    )
+}
 const Header = () => {
-
-  return (
-    <h1>Header counter:</h1>
-  )
+    return (
+        <header>
+            <Link to="/">list</Link>
+            <Link to="/create-todo">add new todo</Link>
+        </header>
+    )
 }
 
 export default function App() {
-  return (
-    <>
-      <Header/>
-      <Counter/>
-    </>
-  );
+    return (
+        <main>
+            {/*// 1 список тудушок, де ми можемо маркувати їх як виконані або видаляти*/}
+            {/*// 2 формочка для створення нової тудушки*/}
+            <Router>
+                <Header/>
+
+                <div style={{padding: 20}}>
+                    <Switch>
+                        <Route path="/" exact>
+                            <TodosList/>
+                        </Route>
+
+                        <Route path="/create-todo">
+                            <AddTodo/>
+                        </Route>
+                    </Switch>
+                </div>
+            </Router>
+        </main>
+    );
 }
+
+// </>
+// React-context
+// https://www.youtube.com/watch?v=IB140yvLfh8
+// ...
 
 
 // React-context
 // https://www.youtube.com/watch?v=IB140yvLfh8
-// 8:56
+// 00:00...
+//<>
+// import './App.css';
+// import React, {useState, createContext, useContext} from "react";
+//
+// const CounterContext = createContext();
+// // console.log(CounterContext);
+//
+// const ContextProvider = ({children}) => {
+//     const [counter, setCounter] = useState(0);
+//
+//     const incCounter = () => {
+//         setCounter(counter + 1);
+//     }
+//     const decCounter = () => {
+//         setCounter(counter - 1);
+//     }
+//
+//     const paramsForContext = {
+//         counter,
+//         incCounter,
+//         decCounter
+//     }
+//
+//     return (
+//         <CounterContext.Provider value={
+//             // {counter, incCounter, decCounter}
+//             paramsForContext
+//         }>
+//             {children}
+//         </CounterContext.Provider>
+//     )
+// }
+//
+// const Counter = () => {
+//     const {counter, incCounter, decCounter} = useContext(CounterContext);
+//
+//     return (
+//         <>
+//             {/*<h3 onClick={() => setCounter(counter + 1)}>Counter: {counter}</h3>*/}
+//             <h3>Counter: {counter}</h3>
+//             <button onClick={incCounter}>inc</button>
+//             <button onClick={decCounter}>dec</button>
+//         </>
+//     )
+// }
+//
+// const Header = () => {
+//     // const counterContext = useContext(CounterContext);
+//     // console.log(counterContext);
+//     const {counter, incCounter} = useContext(CounterContext);
+//
+//     return (
+//         <h1 onClick={incCounter}>Header counter: {counter}</h1>
+//     )
+//     // return (
+//     //     <CounterContext.Consumer>
+//     //         {(value) => (
+//     //             <h1 onClick={incCounter}>Header counter: {counter}</h1>
+//     //         )}
+//     //     </CounterContext.Consumer>
+//     // )
+// }
+//
+// export default function App() {
+//     return (
+//         <ContextProvider>
+//             <Header/>
+//             <Counter/>
+//         </ContextProvider>
+//     );
+// }
+// </>
+// React-context
+// https://www.youtube.com/watch?v=IB140yvLfh8
+// ...40:20
