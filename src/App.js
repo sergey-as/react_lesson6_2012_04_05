@@ -1,7 +1,13 @@
 // React-context
 // https://www.youtube.com/watch?v=IB140yvLfh8
-// 40:20... -- 1:04:56
+// 40:20...
 //<>
+// hw:
+// кожна тудушка повиннамати дві кнопки (1-mark as done, 2-delete)
+// onClick 1: текст стає перекресленим, а кнопка стає mark as in progress
+// onClick 2: видалити
+// в хедері: каунт тотал тудус, каунт дан тудус, каунт ектів тудус
+
 import React, {createContext, useContext, useState} from 'react';
 import {Switch, BrowserRouter as Router, Route, Link} from 'react-router-dom';
 
@@ -29,15 +35,28 @@ const TodoContextProvider = ({children}) => {
     )
 }
 
+const TodoItem = ({todo}) => {
+
+    return (
+        <div>
+            <h4>{todo.title}</h4>
+            <p>{todo.description}</p>
+        </div>
+    )
+}
+
 const TodosList = () => {
     const {
         todos
     } = useContext(TodoContext);
 
-    console.log(todos, 'from list');
+    // console.log(todos, 'from list');
 
     return (
-        <h1>todos list</h1>
+        // <h1>todos list</h1>
+        <div>
+            {todos.map(el => <TodoItem key={el.title + el.description} todo={el}/>)}
+        </div>
     )
 }
 
@@ -119,7 +138,7 @@ export default function App() {
 // </>
 // React-context
 // https://www.youtube.com/watch?v=IB140yvLfh8
-// ...
+// ... 1:14:39
 
 
 // React-context
